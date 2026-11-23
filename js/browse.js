@@ -39,12 +39,38 @@ function subsFor(c) {   // 브랜드 분류표(brands.json)의 소분류 중 상
   const names = [...new Set(TX.filter(t => t.code === CODE_OF[c] && (BF.g === '전체' || t.g === BF.g)).map(t => t.s))];
   return names.map(n => [n, PR.filter(p => p.c === c && p.sc === n && gOk(p.g)).length]).filter(x => x[1] > 0).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'ko'));
 }
+
+// 카테고리 이미지 불러오기
+const catImg = (c, sc) =>
+  `<img
+    src="data/img/카테고리/${encodeURIComponent(c)}/${encodeURIComponent(sc)}.png"
+    alt="${esc(sc)}"
+    loading="lazy"
+    onerror="this.remove()"
+  >`;
+
 function catSection(c) {
   const ps = PR.filter(p => p.c === c && gOk(p.g)), subs = subsFor(c);
   if (!ps.length) return '';
-  return `<section id="sec-${c}" class="csec"><button class="cfold cgo" ${plAttr({ c, g: BF.g === '전체' ? null : BF.g })}><b>${c}</b><span class="cgo-a">›</span></button>
-  <div class="cbody"><div class="subgrid">${subs.map(([sc, n]) => `<button class="subtile" ${plAttr({ c, sc, g: BF.g === '전체' ? null : BF.g })}><span class="subic">이미지</span><span class="sn">${esc(sc)}</span></button>`).join('')}</div></div></section>`;
+
+  return `<section id="sec-${c}" class="csec">
+    <button class="cfold cgo" ${plAttr({ c, g: BF.g === '전체' ? null : BF.g })}>
+      <b>${c}</b>
+      <span class="cgo-a">›</span>
+    </button>
+    <div class="cbody">
+      <div class="subgrid">
+        ${subs.map(([sc, n]) => `
+          <button class="subtile" ${plAttr({ c, sc, g: BF.g === '전체' ? null : BF.g })}>
+            <span class="subic">${catImg(c, sc)}</span>
+            <span class="sn">${esc(sc)}</span>
+          </button>
+        `).join('')}
+      </div>
+    </div>
+  </section>`;
 }
+
 function brandCatHTML() {
   const cs = catsFor().filter(c => PR.some(p => p.c === c && gOk(p.g))), rail = cs.includes(BF.rail) ? BF.rail : '전체', all = rail === '전체', list = all ? cs : [rail];
   const total = PR.filter(p => gOk(p.g)).length;
