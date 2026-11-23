@@ -322,6 +322,21 @@ table.t .hl{background:var(--okbg);color:var(--ok);font-weight:700}
 .subgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px 6px}
 .subtile{display:flex;flex-direction:column;align-items:center;gap:3px;border:0;background:none;padding:4px 0;font-size:12px;text-align:center}
 .subic{width:46px;height:46px;border-radius:14px;background:var(--s1);display:grid;place-items:center;font-weight:800;font-size:16px;color:var(--ink2)}
+
+/* 카테고리 이미지 */
+.subic {
+  overflow: hidden;
+}
+
+.subic img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 3px;
+  box-sizing: border-box;
+  display: block;
+}
+
 .subtile .sn{line-height:1.2}
 .catmain .hscroll{padding:0}
 .catmain .mini{width:104px}.catmain .mini .ph{height:118px}
