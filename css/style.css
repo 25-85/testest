@@ -506,3 +506,18 @@ body{padding:0;background:var(--s2,#f3f4f6)}
 .pcard.v4 .nm{font-size:11px;min-height:0;-webkit-line-clamp:1}.pcard.v4 .bn{font-size:10px;margin-top:4px}
 .pcard.v4 .rb{font-size:9px;padding:0 4px;left:3px;bottom:3px}.pcard.v4 .rc-s{font-size:9.5px}.pcard.v4 .rc-fb{font-size:10px}.pcard.v4 .mt{font-size:10px}
 .pgrid.rec.v3{gap:12px 8px}.pcard.v3 .nm{min-height:0;-webkit-line-clamp:1}
+
+/* 브랜드 로고 이미지 */
+.logo.im {
+  overflow: hidden;
+  padding: 0;
+}
+
+.logo.im img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  padding: 4px;
+  box-sizing: border-box;
+}
