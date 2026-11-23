@@ -1,5 +1,32 @@
 /* ===== 화면 2: 브랜드(카테고리·브랜드) · 상품 목록 · 브랜드 상세 · 상품 상세 · 후기 · 답글 ===== */
 const heartBtn = (kind, id, cls = 'hb') => `<button class="${cls} ${S.likes[kind].includes(id) ? 'on' : ''}" data-a="like" data-k="${kind}" data-v="${esc(id)}" aria-label="관심 ${S.likes[kind].includes(id) ? '해제' : '추가'}">${ico('heart')}</button>`;
+const BRAND_IMG_EXTS = ['png', 'jpg', 'jpeg', 'webp', 'PNG', 'JPG'];
+
+function brandImg(name) {
+  const base = `data/img/브랜드/${encodeURIComponent(name)}`;
+
+  return `<img
+    class="brand-logo-img"
+    src="${base}.png"
+    data-base="${base}"
+    data-idx="0"
+    alt="${esc(name)}"
+    loading="lazy"
+    onerror="brandImgFallback(this)"
+  >`;
+}
+
+function brandImgFallback(img) {
+  const idx = Number(img.dataset.idx) + 1;
+
+  if (idx >= BRAND_IMG_EXTS.length) {
+    img.style.display = 'none';
+    return;
+  }
+
+  img.dataset.idx = idx;
+  img.src = `${img.dataset.base}.${BRAND_IMG_EXTS[idx]}`;
+}
 ACT.like = t => {
   const arr = S.likes[t.dataset.k], id = t.dataset.v, i = arr.indexOf(id);
   if (i >= 0) arr.splice(i, 1); else arr.unshift(id);
@@ -89,13 +116,13 @@ function brandListHTML() {
   items.forEach(x => {
     const ini = initOf(x.n), st = brandStat(x.id), sim = similarBrandPct(x.id, S.body), tn = brandTend(x.id);
     if (BF.sort === 'abc' && ini !== last) { rows += `<div class="ihead">${ini}</div>`; last = ini; }
-    rows += `<div class="brand-row" style="padding:12px 8px 12px 16px;border-bottom:1px solid var(--line)"><button class="row grow" style="background:none;border:0;text-align:left;padding:0;gap:12px;min-width:0" data-a="openBrand" data-v="${x.id}"><span class="logo im">이미지</span><span class="grow" style="min-width:0"><b>${esc(x.n)}</b>${BF.g !== '전체' ? ` <span class="xs mute">${BF.g} 상품 ${gCnt(x.id)}개</span>` : ''} <span class="xs mute">${esc(x.en)}</span><span class="row" style="gap:6px;margin-top:4px;flex-wrap:wrap">${st.rv ? `<span class="pill ok">${sim ? '체형 일치' : '정사이즈'} ${sim ? sim.pct : st.pct}%</span>` : `<span class="pill gray">${NO_INFO}</span>`}<span class="pill ${tn.cls}">${tn.label}</span></span></span></button>${heartBtn('brand', String(x.id), 'ib heart')}</div>`;
+    rows += `<div class="brand-row" style="padding:12px 8px 12px 16px;border-bottom:1px solid var(--line)"><button class="row grow" style="background:none;border:0;text-align:left;padding:0;gap:12px;min-width:0" data-a="openBrand" data-v="${x.id}"><span class="logo im">${brandImg(x.n)}</span><span class="grow" style="min-width:0"><b>${esc(x.n)}</b>${BF.g !== '전체' ? ` <span class="xs mute">${BF.g} 상품 ${gCnt(x.id)}개</span>` : ''} <span class="xs mute">${esc(x.en)}</span><span class="row" style="gap:6px;margin-top:4px;flex-wrap:wrap">${st.rv ? `<span class="pill ok">${sim ? '체형 일치' : '정사이즈'} ${sim ? sim.pct : st.pct}%</span>` : `<span class="pill gray">${NO_INFO}</span>`}<span class="pill ${tn.cls}">${tn.label}</span></span></span></button>${heartBtn('brand', String(x.id), 'ib heart')}</div>`;
   });
   return `${idx}<div class="row between" style="padding:10px 16px 4px"><span class="sm mute">브랜드 ${items.length}개</span><button class="sorttg" data-a="bSort" aria-label="정렬 바꾸기">${BF.sort === 'pop' ? '인기순' : '가나다순'} ⇅</button></div>${rows || emptyHTML('', emptyBtn('bfReset', '필터 초기화') + ' ' + emptyBtn('askOpen', '추가 요청하기', 'data-v="브랜드"'))}`;
 }
 function brandSearchHTML() {
   const q = BF.q.trim(), bs = BR.filter(b => findIn(b.n, q) || findIn(b.en, q)), ps = PR.filter(p => findIn(p.n, q) || findIn(p.sc || '', q));
-  return `<div class="sec" style="padding-top:12px"><div class="sec-h"><h3>브랜드 ${bs.length}</h3></div></div>${bs.length ? `<div class="list">${bs.map(b => `<button class="brand-row" data-a="openBrand" data-v="${b.id}"><span class="logo im">이미지</span><span class="grow"><b>${hl(b.n, q)}</b> <span class="xs mute">${esc(b.en)}</span></span><span class="chev">${ico('chev', 'ico')}</span></button>`).join('')}</div>` : emptyHTML('', emptyBtn('askOpen', '브랜드 추가 요청하기', `data-v="브랜드|${esc(q)}"`), '20px 16px')}
+  return `<div class="sec" style="padding-top:12px"><div class="sec-h"><h3>브랜드 ${bs.length}</h3></div></div>${bs.length ? `<div class="list">${bs.map(b => `<button class="brand-row" data-a="openBrand" data-v="${b.id}"><span class="logo im">${brandImg(b.n)}</span><span class="grow"><b>${hl(b.n, q)}</b> <span class="xs mute">${esc(b.en)}</span></span><span class="chev">${ico('chev', 'ico')}</span></button>`).join('')}</div>` : emptyHTML('', emptyBtn('askOpen', '브랜드 추가 요청하기', `data-v="브랜드|${esc(q)}"`), '20px 16px')}
   <div class="sec" style="padding-top:12px"><div class="sec-h"><h3>상품 ${ps.length}</h3>${ps.length > 6 ? `<button class="link" ${plAttr({ q })}>전체 보기 ›</button>` : ''}</div></div>${pgridHTML(sortProducts(ps).slice(0, 9))}`;
 }
 const brandContent = () => BF.q.trim() ? brandSearchHTML() : BF.tab === 'cat' ? brandCatHTML() : brandListHTML();
